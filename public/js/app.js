@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3>${celda.numero}</h3>
                     <p>${celda.tipo}</p>
                     <strong>${celda.estado}</strong>
+                    ${!isLibre && celda.placa ? `<p class="placa">${celda.placa}</p>` : ''}
                 `;
 
                 gridCeldas.appendChild(div);
@@ -49,7 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = {
                 placa: document.getElementById('entPlaca').value,
                 tipo: document.getElementById('entTipo').value,
-                color: document.getElementById('entColor').value
+                color: document.getElementById('entColor').value,
+                pagarMensualidad: document.getElementById("entPagarMensualidad").checked
             };
 
             try {

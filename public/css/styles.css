@@ -93,13 +93,13 @@ input, select {
     display: none;
 }
 
-.mensaje.success { 
+.mensaje-exito, .mensaje.success { 
     display: block; 
     background-color: #E8F5E9; 
     border-left: 4px solid var(--success);
 }
 
-.mensaje.error { 
+.mensaje-error, .mensaje.error { 
     display: block; 
     background-color: #FFEBEE; 
     border-left: 4px solid var(--danger);
@@ -127,6 +127,31 @@ input, select {
 .celda.ocupada {
     background-color: #FFCDD2;
     border-color: #F44336;
+}
+
+.celda h3 {
+    margin: 0 0 5px 0;
+    font-size: 18px;
+}
+
+.celda p {
+    margin: 5px 0;
+    font-size: 12px;
+}
+
+.celda strong {
+    display: block;
+    margin: 5px 0;
+}
+
+.celda .placa {
+    font-weight: bold;
+    font-size: 14px;
+    margin-top: 8px;
+    padding: 5px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    color: #333;
 }
 
 .celda-numero {

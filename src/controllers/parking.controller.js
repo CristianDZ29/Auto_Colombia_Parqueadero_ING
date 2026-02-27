@@ -2,7 +2,17 @@ const { db } = require('../config/database');
 
 const getCeldas = (req, res) => {
     try {
-        const celdas = db.prepare('SELECT * FROM tbl_celda ORDER BY numero').all();
+        const celdas = db.prepare(`
+            SELECT 
+                c.id_celda,
+                c.numero,
+                c.tipo,
+                c.estado,
+                m.placa
+            FROM tbl_celda c
+            LEFT JOIN tbl_movimiento m ON c.id_celda = m.id_celda AND m.hora_salida IS NULL
+            ORDER BY c.numero
+        `).all();
         res.json(celdas);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -10,22 +20,39 @@ const getCeldas = (req, res) => {
 };
 
 const registrarEntrada = (req, res) => {
-    const { placa, tipo, color } = req.body;
+    const { placa, tipo, color, pagarMensualidad} = req.body;
     const placaUpper = placa ? placa.toUpperCase() : '';
 
-    if (!placaUpper || !tipo || !color) {
-        return res.status(400).json({ success: false, message: 'Faltan datos obligatorios' });
+    if (!placaUpper ) {
+        return res.status(400).json({ success: false, message: 'Faltan la placa' });
     }
 
     try {
         // Insertar o actualizar vehículo
-        db.prepare('INSERT OR IGNORE INTO tbl_vehiculo (placa, tipo, color) VALUES (?, ?, ?)')
-            .run(placaUpper, tipo, color);
+        const vehiculoExistente = db.prepare('SELECT * FROM tbl_vehiculo WHERE placa = ?').get(placaUpper);
+        let tipoVehiculo = tipo;
+
+        if (!vehiculoExistente) {
+            if (!pagarMensualidad) {
+                return res.status(403).json({
+                    success: false,
+                    message: 'El vehículo no está en la base de datos. Debe pagar la mensualidad para ingresar (Marque la casilla "El vehículo es nuevo").'
+                });
+            } else {
+                if (!tipo || !color) {
+                    return res.status(400).json({ success: false, message: 'Debe ingresar tipo y color para el nuevo registro' });
+                }
+                db.prepare('INSERT INTO tbl_vehiculo (placa, tipo, color) VALUES (?, ?, ?)')
+                    .run(placaUpper, tipo, color);
+            }
+        } else {
+            tipoVehiculo = vehiculoExistente.tipo;
+        }
 
         // Buscar celda libre
         const celda = db.prepare(
             'SELECT id_celda, numero FROM tbl_celda WHERE estado = ? AND tipo = ? LIMIT 1'
-        ).get('Libre', tipo);
+        ).get('Libre', tipoVehiculo);
 
         if (!celda) {
             return res.status(400).json({ success: false, message: 'No hay celdas disponibles para este tipo de vehículo' });
@@ -81,7 +108,7 @@ const registrarSalida = (req, res) => {
         const horas = (horaSalida - horaEntrada) / (1000 * 60 * 60); // horas decimales
         const horasCobradas = Math.max(1, Math.ceil(horas)); // Mínimo 1 hora
         const valorHora = movimiento.tipo === 'Carro' ? 2000 : 1000;
-        const valor = horasCobradas * valorHora;
+        const valor = 0;
 
         // Registrar salida
         const horaSalidaStr = horaSalida.toISOString();
@@ -95,7 +122,7 @@ const registrarSalida = (req, res) => {
 
         res.json({
             success: true,
-            message: `Salida registrada. Placa: ${placaUpper}, Tiempo: ${horasCobradas} hrs, Valor: $${valor}`,
+            message: `Salida registrada. Placa: ${placaUpper}, (Sistema por mensualudad)`,
             valor: valor,
             horas: horasCobradas
         });
