@@ -1,0 +1,168 @@
+:root {
+    --primary: #1976D2;
+    --success: #43A047;
+    --warning: #FF9800;
+    --danger: #F44336;
+    --secondary: #757575;
+    --bg: #f5f5f5;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg);
+}
+
+header {
+    background-color: var(--primary);
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+header h1 { margin: 0; }
+
+.container {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.panel {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.panel-full {
+    grid-column: 1 / -1;
+}
+
+h2 {
+    color: var(--primary);
+    margin-top: 0;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    text-decoration: none;
+    display: inline-block;
+    color: white;
+}
+
+.btn-primary { background-color: var(--primary); }
+.btn-success { background-color: var(--success); }
+.btn-warning { background-color: var(--warning); }
+.btn-secondary { background-color: var(--secondary); }
+
+.btn:hover { opacity: 0.9; }
+
+.mensaje {
+    margin-top: 15px;
+    padding: 10px;
+    border-radius: 4px;
+    display: none;
+}
+
+.mensaje.success { 
+    display: block; 
+    background-color: #E8F5E9; 
+    border-left: 4px solid var(--success);
+}
+
+.mensaje.error { 
+    display: block; 
+    background-color: #FFEBEE; 
+    border-left: 4px solid var(--danger);
+}
+
+/* Grid de Celdas */
+.grid-celdas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+}
+
+.celda {
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    border: 2px solid;
+}
+
+.celda.libre {
+    background-color: #C8E6C9;
+    border-color: #4CAF50;
+}
+
+.celda.ocupada {
+    background-color: #FFCDD2;
+    border-color: #F44336;
+}
+
+.celda-numero {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.celda-tipo {
+    font-size: 12px;
+}
+
+/* Tabla Historial */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: var(--primary);
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.resumen-vehiculo {
+    background-color: #E3F2FD;
+    padding: 10px;      
+    border-radius: 4px;
+    margin-top: 15px;                                               
+}

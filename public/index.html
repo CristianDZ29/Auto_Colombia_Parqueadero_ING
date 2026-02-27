@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parqueadero Autos Colombia</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <header>
+        <h1>Parqueadero Autos Colombia</h1>
+    </header>
+
+    <main class="container">
+        <!-- Panel de Operaciones -->
+        <section class="panel">
+            <h2>Registro de Entrada</h2>
+            <form id="formEntrada">
+                <div class="form-group">
+                    <label for="entPlaca">Placa del Vehículo:</label>
+                    <input type="text" id="entPlaca" placeholder="ABC-123" required>
+                </div>
+                <div class="form-group">
+                    <label for="entTipo">Tipo:</label>
+                    <select id="entTipo">
+                        <option value="Carro">Carro</option>
+                        <option value="Moto">Moto</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="entColor">Color:</label>
+                    <input type="text" id="entColor" placeholder="Rojo" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Registrar Entrada</button>
+            </form>
+            <div id="mensajeEntrada" class="mensaje"></div>
+        </section>
+
+        <section class="panel">
+            <h2>Registro de Salida</h2>
+            <form id="formSalida">
+                <div class="form-group">
+                    <label for="salPlaca">Placa del Vehículo:</label>
+                    <input type="text" id="salPlaca" placeholder="ABC-123" required>
+                </div>
+                <button type="submit" class="btn btn-warning">Registrar Salida</button>
+            </form>
+            <div id="mensajeSalida" class="mensaje"></div>
+        </section>
+
+        <section class="panel panel-full">
+            <h2>Estado de Celdas</h2>
+            <div id="gridCeldas" class="grid-celdas">
+                <!-- Las celdas se cargan dinámicamente -->
+            </div>
+        </section>
+
+        <section class="panel panel-full">
+            <a href="historial.html" class="btn btn-success">Consultar Historial de Vehículos</a>
+        </section>
+    </main>
+
+    <script src="js/app.js"></script>
+</body>
+
+</html>
