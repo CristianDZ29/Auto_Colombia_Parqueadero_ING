@@ -15,4 +15,10 @@ router.post('/salida', parkingController.registrarSalida);
 // Consultar historial de vehículo
 router.post('/historial', parkingController.consultarHistorial);
 
+// Consultar historial de celda
+router.post('/historial-celda', parkingController.consultarHistorialPorCelda);
+
+// (TEST) Modificar dias
+router.post('/test-modificar-dias', parkingController.testModificarDias);
+
 module.exports = router;

@@ -33,6 +33,11 @@
                     <label for="entColor">Color:</label>
                     <input type="text" id="entColor" placeholder="Rojo" required>
                 </div>
+                <div class="form-group checkbox-group" style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="entPagarMensualidad" style="width: auto;">
+                    <label for="entPagarMensualidad" style="margin: 0; font-weight: normal;">Pagar/Renovar Mensualidad
+                        (Válido por 1 Mes)</label>
+                </div>
                 <button type="submit" class="btn btn-primary">Registrar Entrada</button>
             </form>
             <div id="mensajeEntrada" class="mensaje"></div>
@@ -41,6 +46,13 @@
         <section class="panel">
             <h2>Registro de Salida</h2>
             <form id="formSalida">
+                <div class="form-group" style="margin-bottom: 10px;">
+                    <label for="selectSalidaCeldas">Celda ocupada (Opcional):</label>
+                    <select id="selectSalidaCeldas" class="form-control"
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="">Seleccione una celda para autocompletar la placa...</option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label for="salPlaca">Placa del Vehículo:</label>
                     <input type="text" id="salPlaca" placeholder="ABC-123" required>

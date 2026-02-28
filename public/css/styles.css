@@ -21,7 +21,9 @@ header {
     text-align: center;
 }
 
-header h1 { margin: 0; }
+header h1 {
+    margin: 0;
+}
 
 .container {
     max-width: 1200px;
@@ -36,7 +38,7 @@ header h1 { margin: 0; }
     background: white;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .panel-full {
@@ -60,7 +62,8 @@ label {
     font-weight: bold;
 }
 
-input, select {
+input,
+select {
     width: 100%;
     padding: 10px;
     border: 1px solid #ddd;
@@ -79,12 +82,25 @@ input, select {
     color: white;
 }
 
-.btn-primary { background-color: var(--primary); }
-.btn-success { background-color: var(--success); }
-.btn-warning { background-color: var(--warning); }
-.btn-secondary { background-color: var(--secondary); }
+.btn-primary {
+    background-color: var(--primary);
+}
 
-.btn:hover { opacity: 0.9; }
+.btn-success {
+    background-color: var(--success);
+}
+
+.btn-warning {
+    background-color: var(--warning);
+}
+
+.btn-secondary {
+    background-color: var(--secondary);
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
 
 .mensaje {
     margin-top: 15px;
@@ -93,15 +109,15 @@ input, select {
     display: none;
 }
 
-.mensaje.success { 
-    display: block; 
-    background-color: #E8F5E9; 
+.mensaje.success {
+    display: block;
+    background-color: #E8F5E9;
     border-left: 4px solid var(--success);
 }
 
-.mensaje.error { 
-    display: block; 
-    background-color: #FFEBEE; 
+.mensaje.error {
+    display: block;
+    background-color: #FFEBEE;
     border-left: 4px solid var(--danger);
 }
 
@@ -138,6 +154,14 @@ input, select {
     font-size: 12px;
 }
 
+.celda-placa {
+    font-size: 14px;
+    font-weight: bold;
+    margin-top: 8px;
+    color: #333;
+    display: inline-block;
+}
+
 /* Tabla Historial */
 table {
     width: 100%;
@@ -145,7 +169,8 @@ table {
     margin-top: 15px;
 }
 
-th, td {
+th,
+td {
     padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;
@@ -162,7 +187,7 @@ tr:nth-child(even) {
 
 .resumen-vehiculo {
     background-color: #E3F2FD;
-    padding: 10px;      
+    padding: 10px;
     border-radius: 4px;
-    margin-top: 15px;                                               
+    margin-top: 15px;
 }

@@ -32,10 +32,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     <h3>${celda.numero}</h3>
                     <p>${celda.tipo}</p>
                     <strong>${celda.estado}</strong>
+                    ${!isLibre && celda.placa ? `<div class="celda-placa">${celda.placa}</div>` : ''}
                 `;
 
                 gridCeldas.appendChild(div);
             });
+
+            // Actualizar select de salida
+            const selectSalidaCeldas = document.getElementById('selectSalidaCeldas');
+            if (selectSalidaCeldas) {
+                selectSalidaCeldas.innerHTML = '<option value="">Seleccione una celda para autocompletar la placa...</option>';
+                celdas.forEach(celda => {
+                    if (celda.estado === 'Ocupada' && celda.placa) {
+                        const option = document.createElement('option');
+                        option.value = celda.placa;
+                        option.textContent = `Celda ${celda.numero} [Ocupada] - Placa: ${celda.placa}`;
+                        selectSalidaCeldas.appendChild(option);
+                    }
+                });
+            }
         } catch (error) {
             console.error('Error cargando celdas:', error);
         }
@@ -49,7 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = {
                 placa: document.getElementById('entPlaca').value,
                 tipo: document.getElementById('entTipo').value,
-                color: document.getElementById('entColor').value
+                color: document.getElementById('entColor').value,
+                pagarMensualidad: document.getElementById('entPagarMensualidad') ? document.getElementById('entPagarMensualidad').checked : false
             };
 
             try {
@@ -99,6 +115,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 showMessage(mensajeSalida, 'error', 'Error de conexión');
+            }
+        });
+    }
+
+    // Select de salida
+    const selectSalidaCeldas = document.getElementById('selectSalidaCeldas');
+    if (selectSalidaCeldas) {
+        selectSalidaCeldas.addEventListener('change', (e) => {
+            if (e.target.value) {
+                document.getElementById('salPlaca').value = e.target.value;
             }
         });
     }

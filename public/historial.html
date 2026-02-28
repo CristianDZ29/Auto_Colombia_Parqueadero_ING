@@ -17,19 +17,50 @@
         <section class="panel panel-full">
             <h2>Buscar Historial</h2>
             <form id="formHistorial" class="busqueda-form">
-                <input type="text" id="busPlaca" placeholder="Ingrese la placa (ABC-123)" required>
-                <button type="submit" class="btn btn-primary">Buscar</button>
+                <div class="form-group" style="margin-bottom: 15px; text-align: left;">
+                    <label for="selectBusquedaCelda" style="display: block; margin-bottom: 5px;">Buscar por Celda
+                        Específica:</label>
+                    <select id="selectBusquedaCelda" class="form-control"
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="">Seleccione una celda para ver todo su historial...</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px; text-align: left;">
+                    <label for="selectCeldasOcupadas" style="display: block; margin-bottom: 5px;">Buscar por celda
+                        ocupada (Opcional):</label>
+                    <select id="selectCeldasOcupadas" class="form-control"
+                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                        <option value="">Seleccione una celda para autocompletar la placa...</option>
+                    </select>
+                </div>
+                <input type="text" id="busPlaca" placeholder="Ingrese la placa (ABC-123)"
+                    style="width: 100%; margin-bottom: 10px;">
+                <button type="submit" id="btnBuscarHistorial" class="btn btn-primary">Buscar</button>
                 <a href="index.html" class="btn btn-secondary">Volver</a>
             </form>
         </section>
 
         <section id="resultados" class="panel panel-full" style="display: none;">
-            <div class="resumen-vehiculo">
+            <div class="resumen-vehiculo" id="resumenVehiculo" style="display: none;">
                 <h3>Información del Vehículo</h3>
                 <p><strong>Placa:</strong> <span id="infoPlaca"></span></p>
                 <p><strong>Tipo:</strong> <span id="infoTipo"></span></p>
                 <p><strong>Color:</strong> <span id="infoColor"></span></p>
-                <p><strong>Total de Visitas:</strong> <span id="infoVisitas"></span></p>
+                <div style="display: flex; gap: 20px; align-items: center; margin-top: 10px;">
+                    <p style="margin: 0;"><strong>Días Disponibles (Mensualidad):</strong> <span
+                            id="infoVisitas"></span></p>
+                    <button type="button" class="btn btn-warning" id="btnRestarDia"
+                        style="padding: 5px 10px; font-size: 12px; display: none;">- Test Quitar 1 Día</button>
+                    <button type="button" class="btn btn-success" id="btnSumarDia"
+                        style="padding: 5px 10px; font-size: 12px; display: none;">+ Test Sumar 1 Día</button>
+                </div>
+            </div>
+
+            <div class="resumen-vehiculo" id="resumenCelda" style="display: none; background-color: #FFF3E0;">
+                <h3>Información de la Celda</h3>
+                <p><strong>Celda:</strong> <span id="infoCeldaNum"></span></p>
+                <p><strong>Tipo:</strong> <span id="infoCeldaTipo"></span></p>
+                <p><strong>Total de Registros:</strong> <span id="infoCeldaMovs"></span></p>
             </div>
 
             <h3>Historial de Movimientos</h3>
@@ -38,9 +69,9 @@
                     <tr>
                         <th>Fecha Entrada</th>
                         <th>Fecha Salida</th>
-                        <th>Celda</th>
+                        <th>Celda / Placa</th>
                         <th>Tipo</th>
-                        <th>Valor Pagado</th>
+                        <th>Valor Mensualidad</th>
                     </tr>
                 </thead>
                 <tbody id="tbodyHistorial">

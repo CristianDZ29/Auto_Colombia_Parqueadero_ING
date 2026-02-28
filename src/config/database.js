@@ -22,9 +22,17 @@ function initDatabase() {
         CREATE TABLE IF NOT EXISTS tbl_vehiculo (
             placa TEXT PRIMARY KEY,
             tipo TEXT,
-            color TEXT
+            color TEXT,
+            fecha_vencimiento TEXT
         )
     `);
+
+    // Intentar migrar base de datos si ya existía sin la columna
+    try {
+        db.exec("ALTER TABLE tbl_vehiculo ADD COLUMN fecha_vencimiento TEXT;");
+    } catch (error) {
+        // La columna ya existe, está bien
+    }
 
     // Tabla Movimientos
     db.exec(`
