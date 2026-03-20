@@ -19,52 +19,31 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => { element.style.display = 'none'; }, 5000);
     };
 
-    const selectCeldasOcupadas = document.getElementById('selectCeldasOcupadas');
+    const selectCeldasOcupadas = null; // eliminado
     const selectBusquedaCelda = document.getElementById('selectBusquedaCelda');
     const busPlaca = document.getElementById('busPlaca');
     const resumenVehiculo = document.getElementById('resumenVehiculo');
     const resumenCelda = document.getElementById('resumenCelda');
 
-    // Cargar celdas para los selects
+    // Cargar celdas para el select de historial por celda
     const cargarCeldasSelect = async () => {
         try {
             const res = await fetch(`${API_URL}/celdas`);
             const celdas = await res.json();
 
-            if (selectCeldasOcupadas) {
+            if (selectBusquedaCelda) {
                 celdas.forEach(celda => {
-                    // Llenar select de búsqueda de historial de celda completa 
-                    if (selectBusquedaCelda) {
-                        const optionCelda = document.createElement('option');
-                        optionCelda.value = celda.numero;
-                        optionCelda.textContent = `Celda ${celda.numero} (${celda.tipo}) - Historial completo`;
-                        selectBusquedaCelda.appendChild(optionCelda);
-                    }
-
-                    // Llenar select de celdas ocupadas como autocompletar
-                    if (celda.estado === 'Ocupada' && celda.placa) {
-                        const option = document.createElement('option');
-                        option.value = celda.placa;
-                        option.textContent = `Celda ${celda.numero} [Ocupada] - Placa: ${celda.placa}`;
-                        selectCeldasOcupadas.appendChild(option);
-                    }
+                    const optionCelda = document.createElement('option');
+                    optionCelda.value = celda.numero;
+                    optionCelda.textContent = `Celda ${celda.numero} (${celda.tipo}) - Historial completo`;
+                    selectBusquedaCelda.appendChild(optionCelda);
                 });
 
-                selectCeldasOcupadas.addEventListener('change', (e) => {
+                selectBusquedaCelda.addEventListener('change', (e) => {
                     if (e.target.value) {
-                        busPlaca.value = e.target.value;
-                        if (selectBusquedaCelda) selectBusquedaCelda.value = "";
+                        busPlaca.value = '';
                     }
                 });
-
-                if (selectBusquedaCelda) {
-                    selectBusquedaCelda.addEventListener('change', (e) => {
-                        if (e.target.value) {
-                            busPlaca.value = "";
-                            selectCeldasOcupadas.value = "";
-                        }
-                    });
-                }
             }
         } catch (error) {
             console.error('Error cargando celdas para select:', error);

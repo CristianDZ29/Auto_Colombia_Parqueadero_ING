@@ -1,24 +1,23 @@
 const express = require('express');
 const router = express.Router();
+const ctrl = require('../controllers/parking.controller');
 
-const parkingController = require('../controllers/parking.controller');
+// Celdas
+router.get('/celdas', ctrl.getCeldas);
+router.get('/celdas-disponibles', ctrl.getCeldasDisponibles);
 
-// Obtener todas las celdas
-router.get('/celdas', parkingController.getCeldas);
+// Usuarios
+router.get('/usuarios', ctrl.getUsuarios);
+router.post('/usuarios', ctrl.crearUsuario);
+router.put('/usuarios/:placa', ctrl.actualizarUsuario);
+router.delete('/usuarios/:placa', ctrl.eliminarUsuario);
 
-// Registrar entrada de vehículo
-router.post('/entrada', parkingController.registrarEntrada);
+// Entrada / Salida
+router.post('/entrada', ctrl.registrarEntrada);
+router.post('/salida', ctrl.registrarSalida);
 
-// Registrar salida de vehículo
-router.post('/salida', parkingController.registrarSalida);
-
-// Consultar historial de vehículo
-router.post('/historial', parkingController.consultarHistorial);
-
-// Consultar historial de celda
-router.post('/historial-celda', parkingController.consultarHistorialPorCelda);
-
-// (TEST) Modificar dias
-router.post('/test-modificar-dias', parkingController.testModificarDias);
+// Historial
+router.post('/historial', ctrl.consultarHistorial);
+router.post('/historial-celda', ctrl.consultarHistorialPorCelda);
 
 module.exports = router;

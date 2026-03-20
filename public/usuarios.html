@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de Usuarios — Auto Colombia</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <header>
+        <div class="header-inner">
+            <div class="header-brand">
+                <h1>Gestion de <span>Usuarios</span></h1>
+            </div>
+            <a href="index.html" class="btn btn-outline">Volver al Parqueadero</a>
+        </div>
+    </header>
+
+    <main class="container-full">
+
+        <!-- Barra de acciones -->
+        <div class="toolbar">
+            <div class="toolbar-left">
+                <input type="text" id="searchUsuario" placeholder="Buscar por placa, propietario o celda..." class="search-input">
+            </div>
+            <button class="btn btn-primary" id="btnNuevoUsuario">+ Registrar Usuario</button>
+        </div>
+
+        <!-- Tabla de usuarios -->
+        <section class="panel panel-table">
+            <table id="tablaUsuarios">
+                <thead>
+                    <tr>
+                        <th>Celda</th>
+                        <th>Placa</th>
+                        <th>Propietario</th>
+                        <th>Telefono</th>
+                        <th>Tipo / Color</th>
+                        <th>Mensualidad</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyUsuarios">
+                    <tr><td colspan="8" class="text-center loading-row">Cargando usuarios...</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+    <!-- MODAL: Crear / Editar Usuario -->
+    <div id="modalUsuario" class="modal-overlay" style="display:none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Registrar Nuevo Usuario</h3>
+                <button class="modal-close" id="btnCerrarModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="formUsuario">
+                    <input type="hidden" id="editMode" value="crear">
+                    <input type="hidden" id="editPlacaOriginal">
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="uPlaca">Placa *</label>
+                            <input type="text" id="uPlaca" placeholder="ABC-123" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="uTipo">Tipo de Vehiculo *</label>
+                            <select id="uTipo" required>
+                                <option value="">Seleccionar...</option>
+                                <option value="Carro">Carro</option>
+                                <option value="Moto">Moto</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="uColor">Color</label>
+                            <input type="text" id="uColor" placeholder="Ej: Rojo, Negro">
+                        </div>
+                        <div class="form-group">
+                            <label for="uCelda">Celda Asignada *</label>
+                            <select id="uCelda" required>
+                                <option value="">Seleccione el tipo primero...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="uNombre">Nombre del Propietario</label>
+                            <input type="text" id="uNombre" placeholder="Ej: Carlos Perez">
+                        </div>
+                        <div class="form-group">
+                            <label for="uTelefono">Telefono</label>
+                            <input type="tel" id="uTelefono" placeholder="Ej: 3001234567">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="uPagarMensualidad" checked>
+                            <span>Registrar pago de mensualidad (valido por 1 mes)</span>
+                        </label>
+                    </div>
+
+                    <div id="mensajeModal" class="mensaje"></div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" id="btnCancelarModal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" id="btnGuardarUsuario">Guardar Usuario</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: Historial de Usuario -->
+    <div id="modalHistorial" class="modal-overlay" style="display:none;">
+        <div class="modal modal-wide">
+            <div class="modal-header">
+                <h3 id="historialTitle">Historial de Movimientos</h3>
+                <button class="modal-close" id="btnCerrarHistorial">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="resumenHistorial" class="resumen-vehiculo"></div>
+                <table id="tablaHistorial">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Entrada</th>
+                            <th>Salida</th>
+                            <th>Celda</th>
+                            <th>Duracion</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbodyHistorial">
+                        <tr><td colspan="5" class="text-center">Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/usuarios.js"></script>
+</body>
+
+</html>

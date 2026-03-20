@@ -10,7 +10,12 @@
 
 <body>
     <header>
-        <h1>Historial de Vehículos</h1>
+        <div class="header-inner">
+            <div class="header-brand">
+                <h1>Historial de <span>Vehículos</span></h1>
+            </div>
+            <a href="index.html" class="btn btn-outline">Volver al Parqueadero</a>
+        </div>
     </header>
 
     <main class="container">
@@ -25,18 +30,10 @@
                         <option value="">Seleccione una celda para ver todo su historial...</option>
                     </select>
                 </div>
-                <div class="form-group" style="margin-bottom: 15px; text-align: left;">
-                    <label for="selectCeldasOcupadas" style="display: block; margin-bottom: 5px;">Buscar por celda
-                        ocupada (Opcional):</label>
-                    <select id="selectCeldasOcupadas" class="form-control"
-                        style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
-                        <option value="">Seleccione una celda para autocompletar la placa...</option>
-                    </select>
-                </div>
+
                 <input type="text" id="busPlaca" placeholder="Ingrese la placa (ABC-123)"
                     style="width: 100%; margin-bottom: 10px;">
                 <button type="submit" id="btnBuscarHistorial" class="btn btn-primary">Buscar</button>
-                <a href="index.html" class="btn btn-secondary">Volver</a>
             </form>
         </section>
 

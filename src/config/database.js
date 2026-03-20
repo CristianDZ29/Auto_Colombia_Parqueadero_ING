@@ -17,22 +17,30 @@ function initDatabase() {
         )
     `);
 
-    // Tabla Vehículos
+    // Tabla Vehículos / Usuarios
     db.exec(`
         CREATE TABLE IF NOT EXISTS tbl_vehiculo (
             placa TEXT PRIMARY KEY,
             tipo TEXT,
             color TEXT,
-            fecha_vencimiento TEXT
+            fecha_vencimiento TEXT,
+            id_celda INTEGER,
+            nombre_propietario TEXT,
+            telefono TEXT,
+            FOREIGN KEY(id_celda) REFERENCES tbl_celda(id_celda)
         )
     `);
 
-    // Intentar migrar base de datos si ya existía sin la columna
-    try {
-        db.exec("ALTER TABLE tbl_vehiculo ADD COLUMN fecha_vencimiento TEXT;");
-    } catch (error) {
-        // La columna ya existe, está bien
-    }
+    // Migraciones para columnas que pueden no existir en BD antigua
+    const migraciones = [
+        "ALTER TABLE tbl_vehiculo ADD COLUMN fecha_vencimiento TEXT;",
+        "ALTER TABLE tbl_vehiculo ADD COLUMN id_celda INTEGER;",
+        "ALTER TABLE tbl_vehiculo ADD COLUMN nombre_propietario TEXT;",
+        "ALTER TABLE tbl_vehiculo ADD COLUMN telefono TEXT;"
+    ];
+    migraciones.forEach(sql => {
+        try { db.exec(sql); } catch (e) { /* columna ya existe */ }
+    });
 
     // Tabla Movimientos
     db.exec(`
@@ -55,7 +63,6 @@ function initDatabase() {
     if (result && result.count === 0) {
         const insert = db.prepare('INSERT INTO tbl_celda (numero, tipo, estado) VALUES (?, ?, ?)');
 
-        // Transaction para mayor desempeño
         const seedCeldas = db.transaction(() => {
             for (let i = 1; i <= 10; i++) {
                 insert.run(`A-${i}`, 'Carro', 'Libre');
