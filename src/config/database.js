@@ -57,6 +57,19 @@ function initDatabase() {
         )
     `);
 
+    // Tabla Pagos
+    db.exec(`
+        CREATE TABLE IF NOT EXISTS tbl_pago (
+            id_pago INTEGER PRIMARY KEY AUTOINCREMENT,
+            placa TEXT,
+            monto REAL,
+            metodo_pago TEXT,
+            fecha_pago TEXT,
+            tipo_pago TEXT,
+            recibo TEXT
+        )
+    `);
+
     // Seed data: crear celdas si no existen
     const result = db.prepare('SELECT count(*) as count FROM tbl_celda').get();
 

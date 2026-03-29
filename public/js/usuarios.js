@@ -21,7 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const uCelda     = document.getElementById('uCelda');
     const uNombre    = document.getElementById('uNombre');
     const uTelefono  = document.getElementById('uTelefono');
-    const uPagarMens = document.getElementById('uPagarMensualidad');
+    const uMonto     = document.getElementById('uMonto');
+    const uMetodo    = document.getElementById('uMetodoPago');
+    const seccionPago = document.getElementById('seccionPago');
+
 
     // Modal historial
     const modalHistorial   = document.getElementById('modalHistorial');
@@ -78,9 +81,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         tbodyUsuarios.innerHTML = lista.map(u => {
             const vencida = !u.mensualidadActiva;
+            let claseMens = 'mens-activa';
+            if (vencida) {
+                claseMens = 'mens-vencida';
+            } else if (u.diasDisponibles <= 2) {
+                claseMens = 'mens-peligro'; // Rojo
+            } else if (u.diasDisponibles <= 7) {
+                claseMens = 'mens-alerta';  // Amarillo
+            }
+            
             const estadoMens = vencida
                 ? `<span class="estado-mens mens-vencida">Vencida</span>`
-                : `<span class="estado-mens mens-activa">Activa (${u.diasDisponibles}d)</span>`;
+                : `<span class="estado-mens ${claseMens}">Activa (${u.diasDisponibles}d)</span>`;
 
             const celdaTexto = u.celda_numero
                 ? `<strong>${u.celda_numero}</strong>`
@@ -211,7 +223,6 @@ document.addEventListener('DOMContentLoaded', () => {
         uTelefono.value = u.telefono || '';
         uTipo.value     = u.tipo;
         uTipo.disabled  = true;
-        uPagarMens.checked = false;
 
         // Para editar no se cambia celda (simplificación)
         uCelda.innerHTML = `<option value="${u.id_celda}">${u.celda_numero || 'Sin celda'} (actual)</option>`;
@@ -234,7 +245,9 @@ document.addEventListener('DOMContentLoaded', () => {
             color:              uColor.value.trim(),
             nombre_propietario: uNombre.value.trim(),
             telefono:           uTelefono.value.trim(),
-            pagarMensualidad:   uPagarMens.checked
+            pagarMensualidad:   true,
+            monto:              parseFloat(uMonto.value) || 0,
+            metodo_pago:        uMetodo.value
         };
 
         let url    = `${API_URL}/usuarios`;
@@ -355,8 +368,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 </tr>
             `).join('');
 
+            // Configurar botones de prueba
+            document.getElementById('btnSumarDia').onclick = () => {
+                const val = parseInt(document.getElementById('manualDias').value) || 1;
+                modificarDias(val, placa);
+            };
+            document.getElementById('btnRestarDia').onclick = () => {
+                const val = parseInt(document.getElementById('manualDias').value) || 1;
+                modificarDias(-val, placa);
+            };
+
         } catch (err) {
             resumenHistorial.innerHTML = '<p style="color:red">Error al cargar historial.</p>';
+        }
+    };
+
+    const modificarDias = async (dias, placa) => {
+        try {
+            const res = await fetch(`${API_URL}/test-modificar-dias`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ placa, dias })
+            });
+            const result = await res.json();
+            alert(result.message);
+            if (result.success) abrirHistorial(placa);
+        } catch (err) {
+            alert('Error al modificar días.');
         }
     };
 

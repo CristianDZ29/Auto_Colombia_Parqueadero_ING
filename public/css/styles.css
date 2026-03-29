@@ -440,6 +440,8 @@ tr:last-child td { border-bottom: none; }
 
 .mens-activa  { background: #E8F5E9; color: var(--success); }
 .mens-vencida { background: #FFEBEE; color: var(--danger); }
+.mens-alerta  { background: #FFFDE7; color: #F57F17; border: 1px solid #FBC02D; } /* Amarillo */
+.mens-peligro { background: #FFEBEE; color: #C62828; border: 1px solid #E53935; } /* Rojo intenso */
 
 .acciones { display: flex; gap: 6px; flex-wrap: wrap; }
 

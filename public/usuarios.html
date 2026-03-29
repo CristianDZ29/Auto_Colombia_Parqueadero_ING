@@ -102,11 +102,19 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="checkbox-label">
-                            <input type="checkbox" id="uPagarMensualidad" checked>
-                            <span>Registrar pago de mensualidad (valido por 1 mes)</span>
-                        </label>
+                    <div id="seccionPago" class="form-row" style="margin-top: 10px;">
+                        <div class="form-group">
+                            <label for="uMonto">Monto a Pagar *</label>
+                            <input type="number" id="uMonto" value="50000" placeholder="Ej: 50000">
+                        </div>
+                        <div class="form-group">
+                            <label for="uMetodoPago">Método de Pago *</label>
+                            <select id="uMetodoPago">
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Transferencia">Transferencia</option>
+                                <option value="Tarjeta">Tarjeta</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div id="mensajeModal" class="mensaje"></div>
@@ -129,6 +137,15 @@
             </div>
             <div class="modal-body">
                 <div id="resumenHistorial" class="resumen-vehiculo"></div>
+                
+                <!-- Botones de prueba -->
+                <div id="testActions" style="margin-bottom: 15px; display: flex; gap: 8px; align-items: center; justify-content: center; background: #FFF3E0; padding: 10px; border-radius: 4px; border: 1px solid #FFE0B2;">
+                    <span style="font-size: 12px; font-weight: 700; color: #E65100;">🧪 PRUEBAS:</span>
+                    <input type="number" id="manualDias" value="1" style="width: 50px; padding: 4px; font-size: 12px; text-align: center; border: 1px solid #ccc; border-radius: 4px;">
+                    <button class="btn btn-warning btn-sm" id="btnRestarDia">- Quitar</button>
+                    <button class="btn btn-success btn-sm" id="btnSumarDia">+ Añadir</button>
+                </div>
+
                 <table id="tablaHistorial">
                     <thead>
                         <tr>

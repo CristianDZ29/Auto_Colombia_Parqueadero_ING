@@ -172,6 +172,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify({ placa })
                 });
                 const result = await res.json();
+                
+                if (res.status === 403 && result.requierePago) {
+                    abrirPagoRapido(placa);
+                    return;
+                }
+
                 showMessage(mensajeEntrada, result.success ? 'success' : 'error', result.message);
                 if (result.success) {
                     formEntrada.reset();
@@ -181,6 +187,74 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (err) {
                 showMessage(mensajeEntrada, 'error', 'Error de conexión con el servidor.');
+            }
+        });
+    }
+
+    // ─────────────────────────────────────────
+    // PAGO RÁPIDO Y ENTRADA
+    // ─────────────────────────────────────────
+    const abrirPagoRapido = (placa) => {
+        document.getElementById('pagoRapidoPlaca').value = placa;
+        document.getElementById('pagoRapidoTexto').textContent = `El vehículo con placa ${placa} tiene la mensualidad vencida. Realice el pago para permitir el ingreso.`;
+        document.getElementById('modalPagoRapido').style.display = 'flex';
+        document.getElementById('mensajePagoRapido').style.display = 'none';
+        
+        // Sugerir monto basado en tipo si cargó datos previos
+        const opt = selectVehiculoEntrada.querySelector(`option[value="${placa}"]`);
+        if (opt && opt.dataset.tipo === 'Moto') {
+            document.getElementById('prMonto').value = 30000;
+        } else {
+            document.getElementById('prMonto').value = 50000;
+        }
+    };
+
+    const formPagoRapido = document.getElementById('formPagoRapido');
+    if (formPagoRapido) {
+        formPagoRapido.addEventListener('submit', async e => {
+            e.preventDefault();
+            const placa = document.getElementById('pagoRapidoPlaca').value;
+            const monto = document.getElementById('prMonto').value;
+            const metodo = document.getElementById('prMetodo').value;
+            const mensajePR = document.getElementById('mensajePagoRapido');
+
+            try {
+                // 1. Registrar el pago y renovar
+                const resPago = await fetch(`${API_URL}/usuarios/${placa}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pagarMensualidad: true, monto, metodo_pago: metodo })
+                });
+                const resultPago = await resPago.json();
+
+                if (resultPago.success) {
+                    showMessage(mensajePR, 'success', 'Pago registrado. Intentando registrar entrada...');
+                    
+                    // 2. Intentar entrada automáticamente tras pago exitoso
+                    const resEntrada = await fetch(`${API_URL}/entrada`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ placa })
+                    });
+                    const resultEntrada = await resEntrada.json();
+
+                    if (resultEntrada.success) {
+                        showMessage(mensajeEntrada, 'success', `✅ Pago y entrada registrados: ${placa}`);
+                        setTimeout(() => {
+                            document.getElementById('modalPagoRapido').style.display = 'none';
+                            formEntrada.reset();
+                            infoVehiculoEntrada.textContent = '';
+                            loadCeldas();
+                            loadVehiculosEntrada();
+                        }, 1500);
+                    } else {
+                        showMessage(mensajePR, 'error', 'Pago OK, pero error en entrada: ' + resultEntrada.message);
+                    }
+                } else {
+                    showMessage(mensajePR, 'error', resultPago.message);
+                }
+            } catch (err) {
+                showMessage(mensajePR, 'error', 'Error en el proceso de pago rápido.');
             }
         });
     }

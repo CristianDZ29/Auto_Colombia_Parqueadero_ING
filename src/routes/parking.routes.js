@@ -20,4 +20,9 @@ router.post('/salida', ctrl.registrarSalida);
 router.post('/historial', ctrl.consultarHistorial);
 router.post('/historial-celda', ctrl.consultarHistorialPorCelda);
 
+// Pagos
+router.get('/pagos', ctrl.getPagos);
+router.post('/pagos', ctrl.registrarPago);
+router.post('/test-modificar-dias', ctrl.testModificarDias);
+
 module.exports = router;

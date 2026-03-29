@@ -108,12 +108,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         result.movimientos.forEach(mov => {
                             const tr = document.createElement('tr');
+                            const entrada = mov.hora_entrada ? new Date(mov.hora_entrada).toLocaleString() : '—';
+                            const salida = mov.hora_salida ? new Date(mov.hora_salida).toLocaleString() : 'En Parqueadero';
+                            const identificador = isBusquedaPorCelda ? mov.placa : mov.celda;
+                            
                             tr.innerHTML = `
-                                <td>${new Date(mov.hora_entrada).toLocaleString()}</td>
-                                <td>${mov.hora_salida ? new Date(mov.hora_salida).toLocaleString() : 'En Parqueadero'}</td>
-                                <td>${isBusquedaPorCelda ? mov.placa : mov.celda}</td>
-                                <td>${mov.tipo}</td>
-                                <td>${mov.tipo === 'Carro' ? '$60,000' : '$30,000'}</td>
+                                <td>${entrada}</td>
+                                <td>${salida}</td>
+                                <td>${identificador}</td>
+                                <td>${mov.tipo || 'N/A'}</td>
+                                <td>${mov.tipo === 'Carro' ? '$2,000 / $50,000' : '$1,000 / $30,000'}</td>
                             `;
                             tbodyHistorial.appendChild(tr);
                         });

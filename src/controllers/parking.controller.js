@@ -86,8 +86,10 @@ const getUsuarios = (req, res) => {
 };
 
 const crearUsuario = (req, res) => {
-    const { placa, tipo, color, nombre_propietario, telefono, id_celda, pagarMensualidad } = req.body;
+    const { placa, tipo, color, nombre_propietario, telefono, id_celda, monto, metodo_pago } = req.body;
     const placaUpper = placa ? placa.toUpperCase().trim() : '';
+    // En este sistema, el registro siempre implica pago inicial
+    const pagarMensualidad = true; 
 
     if (!placaUpper || !tipo || !id_celda) {
         return res.status(400).json({ success: false, message: 'Placa, tipo y celda son obligatorios.' });
@@ -121,6 +123,13 @@ const crearUsuario = (req, res) => {
             const nuevaFecha = new Date();
             nuevaFecha.setMonth(nuevaFecha.getMonth() + 1);
             fechaVencimiento = nuevaFecha.toISOString();
+
+            // Registrar el pago
+            const { monto, metodo_pago } = req.body;
+            db.prepare(`
+                INSERT INTO tbl_pago (placa, monto, metodo_pago, fecha_pago, tipo_pago)
+                VALUES (?, ?, ?, ?, ?)
+            `).run(placaUpper, monto || 0, metodo_pago || 'Efectivo', new Date().toISOString(), 'Mensualidad');
         }
 
         db.prepare(`
@@ -137,7 +146,7 @@ const crearUsuario = (req, res) => {
 const actualizarUsuario = (req, res) => {
     const { placa } = req.params;
     const placaUpper = placa ? placa.toUpperCase() : '';
-    const { color, nombre_propietario, telefono, pagarMensualidad } = req.body;
+    const { color, nombre_propietario, telefono, pagarMensualidad, monto, metodo_pago } = req.body;
 
     try {
         const vehiculo = db.prepare('SELECT * FROM tbl_vehiculo WHERE placa = ?').get(placaUpper);
@@ -155,6 +164,13 @@ const actualizarUsuario = (req, res) => {
             base.setMonth(base.getMonth() + 1);
             nuevaFechaVencimiento = base.toISOString();
             msg += ' Mensualidad renovada por 1 mes.';
+
+            // Registrar el pago
+            const { monto, metodo_pago } = req.body;
+            db.prepare(`
+                INSERT INTO tbl_pago (placa, monto, metodo_pago, fecha_pago, tipo_pago)
+                VALUES (?, ?, ?, ?, ?)
+            `).run(placaUpper, monto || 0, metodo_pago || 'Efectivo', ahora.toISOString(), 'Renovación');
         }
 
         db.prepare(`
@@ -191,9 +207,14 @@ const eliminarUsuario = (req, res) => {
             return res.status(400).json({ success: false, message: 'El vehículo está actualmente dentro. Registre la salida primero.' });
         }
 
+        // NO eliminar del historial para mantener registro histórico de la celda
+        // Pero marcamos que el vehículo fue eliminado desenlazándolo de la placa real en tbl_vehiculo si es necesario,
+        // aunque para el historial de celda es mejor que quede la placa grabada como texto.
+
+        // Luego eliminar el usuario/vehículo
         db.prepare('DELETE FROM tbl_vehiculo WHERE placa = ?').run(placaUpper);
 
-        res.json({ success: true, message: `Usuario ${placaUpper} eliminado.` });
+        res.json({ success: true, message: `Usuario ${placaUpper} eliminado exitosamente. Historial preservado.` });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
@@ -369,15 +390,83 @@ const consultarHistorialPorCelda = (req, res) => {
         }
 
         const movimientos = db.prepare(`
-            SELECT m.hora_entrada, m.hora_salida, m.valor, m.placa, c.numero as celda, v.tipo, v.color
+            SELECT m.hora_entrada, m.hora_salida, m.valor, m.placa, c.numero as celda, 
+                   COALESCE(v.tipo, 'N/A') as tipo, COALESCE(v.color, 'N/A') as color
             FROM tbl_movimiento m
             JOIN tbl_celda c ON m.id_celda = c.id_celda
-            JOIN tbl_vehiculo v ON m.placa = v.placa
+            LEFT JOIN tbl_vehiculo v ON m.placa = v.placa
             WHERE c.numero = ?
             ORDER BY m.hora_entrada DESC
         `).all(celdaUpper);
 
         res.json({ success: true, movimientos, totalVisitas: movimientos.length, celda: celdaInfo });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+const getPagos = (req, res) => {
+    try {
+        const pagos = db.prepare(`
+            SELECT p.*, v.nombre_propietario
+            FROM tbl_pago p
+            LEFT JOIN tbl_vehiculo v ON p.placa = v.placa
+            ORDER BY p.fecha_pago DESC
+        `).all();
+        res.json({ success: true, pagos });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+const registrarPago = (req, res) => {
+    const { placa, monto, metodo_pago, tipo_pago } = req.body;
+    const placaUpper = placa ? placa.toUpperCase().trim() : '';
+
+    if (!placaUpper || !monto) {
+        return res.status(400).json({ success: false, message: 'Placa y monto son obligatorios.' });
+    }
+
+    try {
+        const ahora = new Date().toISOString();
+        const recibo = 'REC-' + Date.now();
+        
+        db.prepare(`
+            INSERT INTO tbl_pago (placa, monto, metodo_pago, fecha_pago, tipo_pago, recibo)
+            VALUES (?, ?, ?, ?, ?, ?)
+        `).run(placaUpper, monto, metodo_pago || 'Efectivo', ahora, tipo_pago || 'Otro', recibo);
+
+        res.json({ success: true, message: 'Pago registrado correctamente.', recibo });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+const testModificarDias = (req, res) => {
+    let { placa, dias } = req.body;
+    const placaUpper = placa ? placa.toUpperCase().trim() : '';
+    const numDias = parseInt(dias);
+
+    try {
+        const vehiculo = db.prepare('SELECT fecha_vencimiento FROM tbl_vehiculo WHERE placa = ?').get(placaUpper);
+        if (!vehiculo) {
+            return res.status(404).json({ success: false, message: 'Vehículo no encontrado.' });
+        }
+
+        let actual;
+        if (vehiculo.fecha_vencimiento) {
+            actual = new Date(vehiculo.fecha_vencimiento);
+        } else {
+            actual = new Date();
+        }
+
+        // Modificar los días
+        actual.setDate(actual.getDate() + numDias);
+        const nuevaFecha = actual.toISOString();
+
+        db.prepare('UPDATE tbl_vehiculo SET fecha_vencimiento = ? WHERE placa = ?').run(nuevaFecha, placaUpper);
+
+        res.json({ success: true, message: `Días modificados. Nueva fecha: ${new Date(nuevaFecha).toLocaleDateString('es-CO')}` });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
@@ -393,5 +482,8 @@ module.exports = {
     registrarEntrada,
     registrarSalida,
     consultarHistorial,
-    consultarHistorialPorCelda
+    consultarHistorialPorCelda,
+    getPagos,
+    registrarPago,
+    testModificarDias
 };
